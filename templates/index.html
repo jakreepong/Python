@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox User Info</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Roblox User Info</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+    <div class="container">
+        <form method="POST" action="/" id="usernameForm">
+            <div class="form-group">
+                <label for="username">Enter Roblox Username:</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <br>
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+
+        {% if user_data %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user_data.displayName }} ({{ user_data.username }})</h5>
+                    <p class="card-text">User ID: {{ user_data.userid }}</p>
+                    <p class="card-text">Join Date: {{ user_data.joinDate }}</p>
+                    <p class="card-text">Friends: {{ user_data.friends }}</p>
+                    <p class="card-text">Followers: {{ user_data.followers }}</p>
+                    <p class="card-text">Following: {{ user_data.following }}</p>
+                </div>
+                <div class="avatar-container">
+                    <img src="{{ user_data.fullBodyAvatarThumbnail }}" alt="Avatar" class="img-fluid">
+                </div>
+            </div>            
+
+            <h4>Groups:</h4>
+            <div class="list-group">
+                {% for group in user_data.groups %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ group.name }}</h5>
+                        <p class="mb-1">ID: {{ group.id }}</p>
+                        <p class="mb-1">Group Role: {{ group.role }}</p>
+                        <p class="mb-1">Rank: {{ group.rank }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
