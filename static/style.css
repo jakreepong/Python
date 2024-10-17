@@ -54,8 +54,15 @@ h4 {
 }
 
 .footer {
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100%;
     padding: 10px 0;
+}
+.groups-list .list-group-item {
+    margin-bottom: 15px;
+}
+
+.items-list .list-group-item {
+    margin-bottom: 15px;
 }

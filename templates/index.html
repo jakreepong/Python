@@ -45,7 +45,7 @@
             </div>
             
             <h4>Avatar Items:</h4>
-            <div class="list-group">
+            <div class="list-group items-list">
                 {% for item in user_data.avatarItems %}
                     <div class="list-group-item">
                         <h5 class="mb-1">{{ item.name }}</h5>
@@ -60,13 +60,34 @@
 
             <br>
             <h4>Groups:</h4>
-            <div class="list-group">
+            <div class="list-group groups-list">
                 {% for group in user_data.groups %}
-                    <div class="list-group-item">
-                        <h5 class="mb-1">{{ group.name }}</h5>
-                        <p class="mb-1">ID: {{ group.id }}</p>
-                        <p class="mb-1">Group Role: {{ group.role }}</p>
-                        <p class="mb-1">Rank: {{ group.rank }}</p>
+                    <div class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="group-info">
+                            <h5 class="mb-1">{{ group.name }}</h5>
+                            <p class="mb-1">ID: {{ group.id }}</p>
+                            <p class="mb-1">Group Role: {{ group.role }}</p>
+                            <p class="mb-1">Rank: {{ group.rank }}</p>
+                            <p class="mb-1">Description: {{ group.description }}</p> <!-- New Description -->
+                            <p class="mb-1">Owner: {{ group.owner_display_name }} ({{ group.owner_username }})</p> <!-- Owner Info -->
+                            <p class="mb-1">Members: {{ group.member_count }}</p>
+                            <p class="mb-1">
+                                Public Entry Allowed: 
+                                {% if group.public_entry_allowed %}
+                                    ✅ Yes
+                                {% else %}
+                                    ❌ No
+                                {% endif %}
+                            </p>
+                            <p class="mb-1">
+                                Has Verified Badge: 
+                                {% if group.has_verified_badge %}
+                                    ✅ Yes
+                                {% else %}
+                                    ❌ No
+                                {% endif %}
+                            </p>
+                        </div>
                         <div class="group-container">
                             <img src="{{ group.thumbnail }}" alt="Group" class="img-group">
                         </div>

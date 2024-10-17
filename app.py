@@ -53,6 +53,12 @@ def index():
             groups_response = requests.get(f'https://groups.roblox.com/v1/users/{user_id}/groups/roles')
             groups_data = groups_response.json()
 
+            def get_group_details(group_id):
+                url = f'https://groups.roblox.com/v1/groups/{group_id}'
+                response = requests.get(url)
+                data = response.json()
+                return data
+
             #Get asset thumbnail
             def get_asset_thumbnail(item_id):
                 url = f'https://thumbnails.roblox.com/v1/assets?assetIds={item_id}&size=150x150&format=Png'
@@ -87,13 +93,32 @@ def index():
             groups = []
             if 'data' in groups_data:
                 for group in groups_data['data']:
-                    group_thumbnail = get_group_thumbnail(group['group']['id'])
+                    group_id = group['group']['id']
+                    group_details = get_group_details(group_id)
+        
+                    group_name = group_details.get('name', 'Unknown Group')
+                    group_description = group_details.get('description', 'No Description Available')
+                    group_owner = group_details.get('owner', {})
+                    owner_username = group_owner.get('username', 'Unknown Owner')
+                    owner_display_name = group_owner.get('displayName', 'Unknown Owner Display Name')
+                    member_count = group_details.get('memberCount', 0)
+                    public_entry_allowed = group_details.get('publicEntryAllowed', False)
+                    has_verified_badge = group_details.get('hasVerifiedBadge', False)
+        
+                    group_thumbnail = get_group_thumbnail(group_id)
+
                     groups.append({
-                        'name': group['group']['name'],
-                        'id': group['group']['id'],
+                        'name': group_name,
+                        'id': group_id,
                         'role': group['role']['name'],
                         'rank': group['role']['rank'],
-                        'thumbnail': group_thumbnail
+                        'thumbnail': group_thumbnail,
+                        'description': group_description,
+                        'owner_username': owner_username,
+                        'owner_display_name': owner_display_name,
+                        'member_count': member_count,
+                        'public_entry_allowed': public_entry_allowed,
+                        'has_verified_badge': has_verified_badge,
                     })
 
             user_data = {
