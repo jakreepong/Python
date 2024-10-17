@@ -42,10 +42,21 @@
                     <p class="card-text">Following: {{ user_data.following }}</p>
                 </div>
                 <div class="avatar-container">
-                    <img src="{{ user_data.fullBodyAvatarThumbnail }}" alt="Avatar" class="img-fluid">
+                    <img src="{{ user_data.fullBodyAvatarThumbnail }}" alt="Avatar" class="img-avatar">
                 </div>
-            </div>            
-
+            </div>
+            
+            <h4>Avatar Items:</h4>
+            <div class="list-group">
+                {% for item in user_data.avatarItems %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ item.name }}</h5>
+                        <p class="mb-1">Item Type: {{ item.assetType.name }}</p>
+                        <p class="mb-1">Item ID: {{ item.id }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
             <h4>Groups:</h4>
             <div class="list-group">
                 {% for group in user_data.groups %}
@@ -54,6 +65,9 @@
                         <p class="mb-1">ID: {{ group.id }}</p>
                         <p class="mb-1">Group Role: {{ group.role }}</p>
                         <p class="mb-1">Rank: {{ group.rank }}</p>
+                        <div class="group-container">
+                            <img src="{{ group.thumbnail }}" alt="Group" class="img-group">
+                        </div>
                     </div>
                 {% endfor %}
             </div>

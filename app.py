@@ -3,6 +3,14 @@ import requests
 
 app = Flask(__name__)
 
+def get_group_thumbnail(group_id):
+    url = f'https://thumbnails.roblox.com/v1/groups/icons?groupIds={group_id}&size=150x150&format=Png'
+    response = requests.get(url)
+    data = response.json()
+    if 'data' in data and len(data['data']) > 0:
+        return data['data'][0]['imageUrl']
+    return None
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     user_data = None
@@ -43,20 +51,24 @@ def index():
             avatar_data = avatar_response.json()
             full_body_thumbnail = avatar_data['data'][0]['imageUrl']
 
-            # Step 7: Get user groups
+            # Step 7: Get avatar items (assets)
+            avatar_items_response = requests.get(f'https://avatar.roblox.com/v1/users/{user_id}/avatar')
+            avatar_items = avatar_items_response.json()
+
+            # Get user groups
             groups_response = requests.get(f'https://groups.roblox.com/v1/users/{user_id}/groups/roles')
             groups_data = groups_response.json()
 
-            # Process group data
             groups = []
             if 'data' in groups_data:
                 for group in groups_data['data']:
-
+                    group_thumbnail = get_group_thumbnail(group['group']['id'])
                     groups.append({
                         'name': group['group']['name'],
                         'id': group['group']['id'],
                         'role': group['role']['name'],
-                        'rank': group['role']['rank']
+                        'rank': group['role']['rank'],
+                        'thumbnail': group_thumbnail
                     })
 
             user_data = {
@@ -69,8 +81,8 @@ def index():
                 'following': following_count,
                 'fullBodyAvatarThumbnail': full_body_thumbnail,
                 'groups': groups,
+                'avatarItems': avatar_items['assets'],
             }
-            pass
         else:
             error_message = "User not found or no data returned."
 
