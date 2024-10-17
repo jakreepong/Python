@@ -1,21 +1,14 @@
 from flask import Flask, render_template, request
 import requests
-import autopy
+from datetime import datetime
 
 app = Flask(__name__)
-
-def get_group_thumbnail(group_id):
-    url = f'https://thumbnails.roblox.com/v1/groups/icons?groupIds={group_id}&size=150x150&format=Png'
-    response = requests.get(url)
-    data = response.json()
-    if 'data' in data and len(data['data']) > 0:
-        return data['data'][0]['imageUrl']
-    return None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     user_data = None
     error_message = None
+    current_year = datetime.now().year
     
     if request.method == 'POST':
         username = request.form['username']
@@ -60,6 +53,37 @@ def index():
             groups_response = requests.get(f'https://groups.roblox.com/v1/users/{user_id}/groups/roles')
             groups_data = groups_response.json()
 
+            #Get asset thumbnail
+            def get_asset_thumbnail(item_id):
+                url = f'https://thumbnails.roblox.com/v1/assets?assetIds={item_id}&size=150x150&format=Png'
+                response = requests.get(url)
+                data = response.json()
+
+                if 'data' in data and len(data['data']) > 0:
+                    return data['data'][0]['imageUrl']
+                return None
+
+            # Get group thumbnail
+            def get_group_thumbnail(group_id):
+                url = f'https://thumbnails.roblox.com/v1/groups/icons?groupIds={group_id}&size=150x150&format=Png'
+                response = requests.get(url)
+                data = response.json()
+
+                if 'data' in data and len(data['data']) > 0:
+                    return data['data'][0]['imageUrl']
+                return None
+            
+            avatar_items_list = []
+            if 'assets' in avatar_items:
+                for item in avatar_items['assets']:
+                    asset_thumbnail = get_asset_thumbnail(item['id'])
+                    avatar_items_list.append({
+                        'name': item['name'],
+                        'assetType': item['assetType'],
+                        'id': item['id'],
+                        'imageUrl': asset_thumbnail
+                    })
+
             groups = []
             if 'data' in groups_data:
                 for group in groups_data['data']:
@@ -82,12 +106,12 @@ def index():
                 'following': following_count,
                 'fullBodyAvatarThumbnail': full_body_thumbnail,
                 'groups': groups,
-                'avatarItems': avatar_items['assets'],
+                'avatarItems': avatar_items_list,
             }
         else:
             error_message = "User not found or no data returned."
 
-    return render_template('index.html', user_data=user_data, error_message=error_message)
+    return render_template('index.html', user_data=user_data, error_message=error_message, current_year=current_year)
 
 if __name__ == '__main__':
     app.run(debug=True)
